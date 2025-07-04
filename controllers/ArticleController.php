@@ -4,6 +4,7 @@ require(__DIR__ . "/../models/Article.php");
 require(__DIR__ . "/../connection/connection.php");
 require(__DIR__ . "/../services/ArticleService.php");
 require(__DIR__ . "/../services/ResponseService.php");
+require(__DIR__ . "/../services/UpdateArticleProperties.php");
 
 class ArticleController{
     
@@ -18,15 +19,82 @@ class ArticleController{
         }
 
         $id = $_GET["id"];
-        $article = Article::find($mysqli, $id)->toArray();
+        $article = Article::find( $id);
         echo ResponseService::success_response($article);
         return;
     }
 
     public function deleteAllArticles(){
-        die("Deleting...");
+        global $mysqli;
+        if(!isset($_GET["id"])){
+            $articles = Article::DeleteAll($mysqli);
+            if($articles){
+                echo "All data successfully deleted";
+            }
+            else{
+                echo "Error 404";
+            }
+            return;
+            
+        }
+        $id = $_GET["id"];
+        $article = Article::delete($mysqli, $id);
+        echo ResponseService::success_response($article);
+        return;
+
+        
     }
+
+    public function updateArticles() {
+        global $mysqli;
+
+        if (!isset($_GET["id"])) {
+            echo "Id not found to update the table";
+            return;
+        }
+
+        $id = $_GET["id"];
+        $article = Article::find($id); 
+        if (!$article) {
+            echo "Article not found";
+            return;
+        }
+        $inputData = $_POST; 
+        updateArticleProperties::setArticleProperties($article, $inputData); 
+
+        
+        
+
+        $success = $article->update();
+
+        if ($success) {
+            echo ResponseService::success_response($article);
+        } else {
+            echo "Failed to update article";
+        }
+    }
+    public function createArticle() {
+        global $mysqli;
+
+        $inputData = $_GET; 
+
+        $article = new Article([]);
+
+        // Set properties safely from input
+        updateArticleProperties::setArticleProperties($article, $inputData);
+
+        $success = $article->create($inputData);  
+
+        if ($success) {
+            echo ResponseService::success_response($article);
+        } else {
+            echo "Failed to create article";
+        }
+    }
+
 }
+
+
 
 //To-Do:
 
