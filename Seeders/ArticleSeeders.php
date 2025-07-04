@@ -8,7 +8,7 @@ $articles = [
     ['name' => 'Travel on a Budget', 'author' => 'Amy Adams', 'description' => 'How to explore the world without breaking the bank.']
 ];
 
-// Prepare insert statement (id is auto-increment, so not included)
+
 $stmt = $mysqli->prepare("INSERT INTO articles (name, author, description) VALUES (?, ?, ?)");
 
 foreach ($articles as $article) {
