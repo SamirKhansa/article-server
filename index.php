@@ -3,6 +3,7 @@
 // This block is used to extract the route name from the URL
 //----------------------------------------------------------
 // Define your base directory 
+
 $base_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -15,6 +16,7 @@ if (strpos($request, $base_dir) === 0) {
 if ($request == '') {
     $request = '/';
 }
+
 
 //Examples: 
 //http://localhost/getArticles -------> $request = "getArticles"
@@ -30,6 +32,13 @@ if ($request == '') {
 $apis = [
     '/articles'         => ['controller' => 'ArticleController', 'method' => 'getAllArticles'],
     '/delete_articles'         => ['controller' => 'ArticleController', 'method' => 'deleteAllArticles'],
+    '/create_article'=>['controller'=>"ArticleController",'method'=>"createArticle"],
+    '/update_article'=>['controller'=>"ArticleController",'method'=>"updateArticles"],
+
+    'categories'=>['controller'=>'CategoriesController', 'method'=>'getAllCategory'],
+    'delete_categories'=>['controller'=>'CategoriesController', 'method'=>'deleteAllCategory'],
+    'create_categories'=>['controller'=>'CategoriesController', 'method'=>'createCategory'],
+    'update_categories'=>['controller'=>'CategoriesController', 'method'=>'updateCategories'],
 
     '/login'         => ['controller' => 'AuthController', 'method' => 'login'],
     '/register'         => ['controller' => 'AuthController', 'method' => 'register'],
@@ -42,9 +51,12 @@ $apis = [
 //Routing Logic here 
 //This is a dynamic logic, that works on any array... 
 //----------------------------------------------------------
+
+// die($request);
 if (isset($apis[$request])) {
     $controller_name = $apis[$request]['controller']; //if $request == /articles, then the $controller_name will be "ArticleController" 
     $method = $apis[$request]['method'];
+    
     require_once "controllers/{$controller_name}.php";
 
     $controller = new $controller_name();
