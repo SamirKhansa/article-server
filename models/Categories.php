@@ -1,16 +1,16 @@
 <?php
 require_once("Model.php");
 
-class Category extends Model {
+class Categories extends Model {
 
-    private int $id;
-    private string $name;
-    private string $description;
+    public ?int $id = null;
+    public string $name;
+    public string $description;
 
     protected static string $table = "categories";
 
     public function __construct(array $data) {
-        $this->id = $data["id"];
+        $this->id= $data['id']?? null;
         $this->name = $data["name"];
         $this->description = $data["description"];
     }
