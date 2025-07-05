@@ -3,15 +3,16 @@ require_once("Model.php");
 
 class Article extends Model{
 
-    private int $id; 
-    private string $name; 
-    private string $author; 
-    private string $description; 
+    public ?int $id = null;
+    public string $name; 
+    public string $author; 
+    public string $description; 
     
     protected static string $table = "articles";
 
     public function __construct(array $data){
-        $this->id = $data["id"];
+        
+        $this->id= $data['id']?? null;
         $this->name = $data["name"];
         $this->author = $data["author"];
         $this->description = $data["description"];
