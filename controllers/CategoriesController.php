@@ -6,20 +6,21 @@ require(__DIR__ . "/../services/ArticleService.php");
 require(__DIR__ . "/../services/ResponseService.php");
 require(__DIR__ . "/../services/UpdateArticleProperties.php");
 
-class CategoryController{
+class CategoriesController{
     
     public function getAllCategory(){
+        
         global $mysqli;
 
         if(!isset($_GET["id"])){
-            $Category = Category::all($mysqli);
+            $Category = Categories::all($mysqli);
             $Category_array = ArticleService::articlesToArray($Category); 
             echo ResponseService::success_response($Category_array);
             return;
         }
 
         $id = $_GET["id"];
-        $Category = Category::find( $id);
+        $Category = Categories::find( $id);
         echo ResponseService::success_response($Category);
         return;
     }
@@ -27,7 +28,7 @@ class CategoryController{
     public function deleteAllCategory(){
         global $mysqli;
         if(!isset($_GET["id"])){
-            $Category = Category::DeleteAll($mysqli);
+            $Category = Categories::DeleteAll($mysqli);
             if($Category){
                 echo "All data successfully deleted";
             }
@@ -38,7 +39,7 @@ class CategoryController{
             
         }
         $id = $_GET["id"];
-        $Category = Category::delete($mysqli, $id);
+        $Category = Categories::delete($mysqli, $id);
         echo ResponseService::success_response($Category);
         return;
 
@@ -54,21 +55,21 @@ class CategoryController{
         }
 
         $id = $_GET["id"];
-        $Category = Category::find($id); 
-        if (!$Category) {
-            echo "Category not found";
-            return;
-        }
-        $inputData = $_POST; 
-        updateArticleProperties::setArticleProperties($Category, $inputData); 
+        $array=[
+            "id"=>$_GET['id'],
+            "name"=>$_GET['name'],
+            "description"=>$_GET['description']
+        ];
+        
+        $categories=new Categories($array);
 
         
         
 
-        $success = $Category->update();
-
+        $success = $categories->update();
+        
         if ($success) {
-            echo ResponseService::success_response($Category);
+            echo ResponseService::success_response($categories);
         } else {
             echo "Failed to update Category";
         }
@@ -77,10 +78,13 @@ class CategoryController{
         global $mysqli;
 
         $inputData = $_GET; 
+        $array=[
+            "name"=>$_GET['name'],
+            "description"=>$_GET['description']
+        ];
 
-        $Category = new Category([]);
+        $Category = new Categories($array);
 
-        // Set properties safely from input
         updateArticleProperties::setArticleProperties($Category, $inputData);
 
         $success = $Category->create($inputData);  
