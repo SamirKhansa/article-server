@@ -35,10 +35,10 @@ abstract class Model{
 
         $objects = [];
         while($row = $data->fetch_assoc()){
-            $objects[] = new static($row); //creating an object of type "static" / "parent" and adding the object to the array
+            $objects[] = new static($row);
         }
 
-        return $objects; //we are returning an array of objects!!!!!!!!
+        return $objects;
     }
 
     public static function DeleteAll(mysqli $mysqli): bool{
@@ -80,6 +80,9 @@ abstract class Model{
         if (!$stmt) {
         return null; 
         }
+
+        print_r($stmt);
+        
         $types = str_repeat("s", count($columns));
         $values = array_values($data);
         $stmt->bind_param($types, ...$values);
@@ -99,10 +102,11 @@ abstract class Model{
     public function update(): bool {
         
         $props = get_object_vars($this);
-
+        
         
         $id = $props[static::$primary_key];
         unset($props[static::$primary_key]);
+        
 
         
         $columns = array_keys($props);
@@ -112,6 +116,7 @@ abstract class Model{
         $sql = "UPDATE " . static::$table . " SET $setClause WHERE " . static::$primary_key . " = ?";
 
         $stmt = static::$db->prepare($sql);
+        
 
         if (!$stmt) {
             return false; 
@@ -121,9 +126,11 @@ abstract class Model{
         $types = str_repeat("s", count($props)) . "i";
 
         
+        
         $values = array_values($props);
         $values[] = $id;
 
+        print_r($values[2]);
         
         $stmt->bind_param($types, ...$values);
 
@@ -133,12 +140,7 @@ abstract class Model{
 
 
 
-    //you have to continue with the same mindset
-    //Find a solution for sending the $mysqli everytime... 
-    //Implement the following: 
-    //1- update() -> non-static function 
-    //2- create() -> static function
-    //3- delete() -> static function 
+   
 }
 
 
