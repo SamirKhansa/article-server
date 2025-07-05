@@ -46,44 +46,60 @@ class ArticleController{
     }
 
     public function updateArticles() {
-        global $mysqli;
+    global $mysqli;
 
-        if (!isset($_GET["id"])) {
-            echo "Id not found to update the table";
-            return;
-        }
-
-        $id = $_GET["id"];
-        $article = Article::find($id); 
-        if (!$article) {
-            echo "Article not found";
-            return;
-        }
-        $inputData = $_POST; 
-        updateArticleProperties::setArticleProperties($article, $inputData); 
-
-        
-        
-
-        $success = $article->update();
-
-        if ($success) {
-            echo ResponseService::success_response($article);
-        } else {
-            echo "Failed to update article";
-        }
+    if (!isset($_GET["id"])) {
+        echo "Id not found to update the table";
+        return;
     }
+
+    $id = $_GET["id"];
+    
+    $array=[
+        "id"=>$_GET["id"],
+        "name"=> $_GET["name"],
+        "author"=>$_GET["author"],
+        "description"=>$_GET["description"]
+    ];
+    $article= new Article($array);
+
+    
+
+    $success = $article->update();
+    
+
+    if ($success) {
+        echo ResponseService::success_response($article);
+    } else {
+        echo "Failed to update article";
+    }
+}
     public function createArticle() {
+        
+        
         global $mysqli;
+        
+        
 
-        $inputData = $_GET; 
+        $inputData=$_GET;
 
-        $article = new Article([]);
+        $array=[
+            
+            "name"=> $_GET["name"],
+            "author"=>$_GET["author"],
+            "description"=>$_GET["description"]
+        ];
+
+        $article = new Article($array);
+        // die("bye");  
+        
 
         // Set properties safely from input
+        
         updateArticleProperties::setArticleProperties($article, $inputData);
-
+        
         $success = $article->create($inputData);  
+        // die($);
 
         if ($success) {
             echo ResponseService::success_response($article);
